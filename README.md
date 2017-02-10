@@ -3,9 +3,6 @@
 To play:
 ```python
 import game
-game.playgame(game=game.TicTacToe())
-```
-or
-```python
-game.main(game=game.Blackjack())
+import othello  # or some other game that implements the game.py API
+game.playgame(game=othello.Othello())
 ```
