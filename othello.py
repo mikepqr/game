@@ -3,6 +3,14 @@ import itertools as it
 PLAYERS = ['❌', '😎']
 TIE = 1
 
+'''
+To play
+>>> o = Othello()
+>>> while not o.turn()
+...     pass
+>>> print(o.winner if o.winner != TIE else 'Tie!')
+'''
+
 
 class Othello:
 
@@ -101,6 +109,12 @@ class Othello:
         return True if self.flips(xy) else False
 
     def flips(self, xy):
+        '''
+        Return flips implied by current player placing piece at xy
+
+        xy is a tuple. Function returns a list of tuples. If list is empty then
+        move is not legal.
+        '''
         # No moves possible if square already occupied
         if self.square(xy) != '.':
             return []
@@ -117,25 +131,22 @@ class Othello:
                  for dy in (-1, 0, 1)
                  if not(dx == 0 and dy == 0)]
 
-        # Filter lines, retaining squares in each line that are on the board
+        # Retain squares in each line that are on the board
         lines = [list(it.takewhile(self.onboard, [xy for xy in line]))
                  for line in lines]
 
-        # Filter lines, non-empty lines (which happen in corner)
+        # Retain non-empty lines
         lines = [line for line in lines if line]
 
-        # Filter lines, retaining lines whose first tile isother(c)
+        # Retain lines whose first tile is not current player's
         lines = [line for line in lines if isother(line[0])]
 
-        # Filter lines, retaining lines that contain at least one tile
-        # belonging to current player
+        # Retain lines that contain at least one of current player's tiles
         lines = [line for line in lines if any(iscurrent(l) for l in line)]
 
-        # Filter each line, retaining all squares until the first one occupied
-        # current player
+        # Retain all squares until the first one occupied current player
         changexy = [list(it.takewhile(isother, [(x, y) for x, y in line]))
                     for line in lines]
 
-        # Return locations of all sqaures that should be flipped. If this is
-        # empty move is not legal.
+        # Locations of all sqaures that should be flipped.
         return sum(changexy, [])
