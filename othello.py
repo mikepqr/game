@@ -53,7 +53,7 @@ class Othello:
         changes = []
         while not changes:
             try:
-                x, y = tuple(int(x) for x in input("Enter move: ").split(','))
+                y, x = tuple(int(x) for x in input("Enter move: ").split(','))
             except ValueError:
                 print("Move must by of form x, y")
             else:
@@ -83,12 +83,12 @@ class Othello:
 
     def updateboard(self, changes):
         for x, y in changes:
-            self.board[x][y] = self.current_player
+            self.board[y][x] = self.current_player
         return self.board
 
     def square(self, xy):
         x, y = xy
-        return self.board[x][y]
+        return self.board[y][x]
 
     def makeisother(self):
         def isother(xy):
