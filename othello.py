@@ -118,6 +118,9 @@ class Othello:
                             xy[1] < 0 or
                             xy[1] >= self.size) else False
 
+    def occupied(self, xy):
+        return True if self.square(xy) != '.' else False
+
     def legalmove(self, xy):
         return True if self.flips(xy) else False
 
@@ -133,7 +136,7 @@ class Othello:
         move is not legal.
         '''
         # No moves possible if square already occupied
-        if self.square(xy) != '.':
+        if self.occupied(xy):
             return []
 
         # Make predicates that take tuple (x, y)
@@ -150,6 +153,10 @@ class Othello:
 
         # Retain squares in each line that are on the board
         lines = [list(it.takewhile(self.onboard, [xy for xy in line]))
+                 for line in lines]
+
+        # Retain squares in each line until first unoccupied
+        lines = [list(it.takewhile(self.occupied, [xy for xy in line]))
                  for line in lines]
 
         # Retain non-empty lines
