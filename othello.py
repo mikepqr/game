@@ -52,9 +52,15 @@ class Othello:
         print(self)
         changes = []
         while not changes:
-            move = tuple(int(x) for x in input('Enter move: ').split(','))
-            changes = self.flips(move)
-        return changes + [move]
+            try:
+                x, y = tuple(int(x) for x in input("Enter move: ").split(','))
+            except ValueError:
+                print("Move must by of form x, y")
+            else:
+                changes = self.flips((x, y))
+                if not changes:
+                    print("Illegal move")
+        return changes + [(x, y)]
 
     def determinewinner(self):
         score = Counter(tile
