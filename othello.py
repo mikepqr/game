@@ -14,12 +14,13 @@ To play
 
 class Othello:
 
-    def __init__(self, size=8):
+    def __init__(self, size=8, assist=True):
         self.player_order = it.cycle(PLAYERS)
         self.current_player = next(self.player_order)
         self.winner = None
         self.size = size
         self.board = self.newboard()
+        self.assist = assist  # print '*' in legal move locations if True
 
     def newboard(self):
         board = [['.'] * self.size for _ in range(self.size)]
@@ -31,9 +32,22 @@ class Othello:
         return board
 
     def __repr__(self):
-        return '\n'.join(' '.join(tile for tile in row) for row in self.board)
+        if self.assist:
+            board = [[('*' if self.legalmove((x, y)) else tile)
+                      for x, tile in enumerate(row)]
+                     for y, row in enumerate(self.board)]
+        else:
+            board = self.board
+        return self.boardstring(board)
 
-    def _getmove(self):
+    def turn(self):
+        '''Take turn. Returns True if game is finished.'''
+        changes = self.getmove()
+        self.board = self.updateboard(changes)
+        self.current_player = next(self.player_order)
+        return self.isfinished()
+
+    def getmove(self):
         print('Your move, {}'.format(self.current_player))
         print(self)
         changes = []
@@ -42,7 +56,7 @@ class Othello:
             changes = self.flips(move)
         return changes + [move]
 
-    def _determinewinner(self):
+    def determinewinner(self):
         score = Counter(tile
                         for row in self.board
                         for tile in row
@@ -52,28 +66,23 @@ class Othello:
         else:
             return score.most_common()[0][0]
 
-    def _isfinished(self):
+    def isfinished(self):
         if any(self.legalmove((x, y))
-               for x, row in enumerate(self.board)
-               for y, tile in enumerate(row)):
+               for y, row in enumerate(self.board)
+               for x, tile in enumerate(row)):
             return False
         else:
-            self.winner = self._determinewinner()
+            self.winner = self.determinewinner()
             return True
 
-    def turn(self):
-        changes = self._getmove()
-        self.board = self.updateboard(changes)
-        self.current_player = next(self.player_order)
-        return self._isfinished()
-
     def updateboard(self, changes):
-        for xy in changes:
-            self.board[xy[0]][xy[1]] = self.current_player
+        for x, y in changes:
+            self.board[x][y] = self.current_player
         return self.board
 
     def square(self, xy):
-        return self.board[xy[0]][xy[1]]
+        x, y = xy
+        return self.board[x][y]
 
     def makeisother(self):
         def isother(xy):
@@ -94,10 +103,8 @@ class Othello:
     def other(self):
         if self.current_player == PLAYERS[0]:
             return PLAYERS[1]
-        elif self.current_player == PLAYERS[1]:
-            return PLAYERS[0]
         else:
-            raise ValueError
+            return PLAYERS[0]
 
     def onboard(self, xy):
         return True if not (xy[0] < 0 or
@@ -107,6 +114,10 @@ class Othello:
 
     def legalmove(self, xy):
         return True if self.flips(xy) else False
+
+    @staticmethod
+    def boardstring(board):
+        return '\n'.join(' '.join(tile for tile in row) for row in board)
 
     def flips(self, xy):
         '''
