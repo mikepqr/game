@@ -3,6 +3,6 @@
 To play:
 ```python
 import game
-import othello  # or some other game that implements the game.py API
-game.playgame(game=othello.Othello())
+from othello import Othello  # or some other game that implements the game.py API
+game.playgame(Othello())
 ```

@@ -6,14 +6,14 @@ TIE = 1
 
 def playgame(game):
     '''
-    Plays a game that implements the following API (tic tac toe by default):
+    Plays a game that implements the following API:
 
      - a turn() method that takes a turn, and returns True if the game is
        finished.
      - a winner attribute that contains the string value of the winner.
 
-    Ideally game should implement __repr__ so print(game) returns something
-    sensible.
+    Ideally game should also implement __repr__ so print(game) returns
+    something sensible.
     '''
 
     while not game.turn():
